@@ -1,0 +1,21 @@
+Nombres: Micheelle
+Apellidos: Ovando Lopez
+Edad: 19 anos
+Estatura: 1.65
+Telefono: 123456789
+Genero: Mujer
+
+Nombres: Michelle
+Apellidos: Ovando lopez
+Edad: 19 anos
+Estatura: 1.65
+Telefono: 123456789
+Genero: Mujer
+
+Nombres: mich
+Apellidos: ovando
+Edad: 19 anos
+Estatura: 1.65
+Telefono: 123456789
+Genero: Mujer
+
