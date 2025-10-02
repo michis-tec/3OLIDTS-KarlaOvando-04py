@@ -1,78 +1,118 @@
 import tkinter as tk
 from tkinter import messagebox
+import re
 
-def limpiar_campos():
-    tbNombre.delete(0, tk.END) 
-    tbApellidos.delete(0, tk.END)
-    tbEdad.delete(0, tk.END)
-    tbEstatura.delete(0, tk.END)
-    tbTelefono.delete(0, tk.END)
-    var_genero.set(0)   
 
-def borrar_fun():
-    limpiar_campos()
+def guardar_datos():
+    #obtener los datos de los campos
+    nombres = entry_nombres.get()
+    apellidos = entry_apellidos.get()
+    edad = entry_edad.get()
+    estatura = entry_estatura.get()
+    telefono = entry_telefono.get()
 
-def guardar_valores():
-    nombres = tbNombre.get()
-    apellidos = tbApellidos.get()
-    edad = tbEdad.get()
-    estatura = tbEstatura.get()
-    telefono = tbTelefono.get()
-
+    #obtener el genero seleccionado
     genero = ""
     if var_genero.get() == 1:
         genero = "Hombre"
     elif var_genero.get() == 2:
         genero = "Mujer"
 
-    datos = ( "Nombres: " + nombres + "\n" +"Apellidos: " + apellidos + "\n" +
-             "Edad: " + edad +" anos\n" +"Estatura: " + estatura + "\n" +
-            "Telefono: " + telefono + "\n" +"Genero: " + genero)
+    #validar que los campos tengan el formato correcto
+    if (es_entero_valido(edad) and es_decimal_valido(estatura) and
+        es_entero_valido_de_10_digitos(telefono) and es_texto_valido(nombres) and es_texto_valido(apellidos)):
+        #crear una cadena con los datos
+        datos = f"Nombres: {nombres}\nApellidos: {apellidos}\nEdad: {edad} anos\nEstatura: {estatura} cm\nTelefono: {telefono}\nGenero: {genero}"
 
-    with open("3O2025Datos.txt", "a") as archivo:
-        archivo.write(datos + "\n\n")
+        #guardar los datos en un archivo de texto
+        with open("datos.txt", "a") as archivo:
+            archivo.write(datos + "\n\n")
 
-    messagebox.showinfo("Informacion", "Datos guardados con exito:\n\n" + datos)
-    limpiar_campos()
+        #mostrar un mensaje con loss datos capturados
+        messagebox.showinfo("Informacion", "Datos guardados con exito:\n\n" + datos)
 
+        #limpiar los controles despues de guardar
+        limpiar_campos()
+    else:
+        messagebox.showerror("Error", "Por favor, ingrese datos validos en los campos.")
+
+def limpiar_campos():
+    entry_nombres.delete(0, tk.END)
+    entry_apellidos.delete(0, tk.END)
+    entry_edad.delete(0, tk.END)
+    entry_estatura.delete(0, tk.END)
+    entry_telefono.delete(0, tk.END)
+    var_genero.set(0)
+
+def es_entero_valido(valor):
+    try:
+        int(valor)
+        return True
+    except ValueError:
+        return False
+
+def es_decimal_valido(valor):
+    try:
+        float(valor)
+        return True
+    except ValueError:
+        return False
+
+def es_entero_valido_de_10_digitos(valor):
+    return valor.isdigit() and len(valor) == 10
+
+def es_texto_valido(valor):
+    return bool(re.match("^[a-zA-Z\s]+$", valor))
+
+#crear la ventana principal
 ventana = tk.Tk()
-ventana.geometry("520x500")
-ventana.title("Formulario VR.01")
+ventana.title("Formulario")
 
+#crear variables paraa los radiobutton
 var_genero = tk.IntVar()
 
-lbNombre = tk.Label(ventana, text="Nombre: ")
-lbNombre.pack()
-tbNombre = tk.Entry(ventana)
-tbNombre.pack()
-lbApellidos = tk.Label(ventana, text="Apellidos: ")
-lbApellidos.pack()
-tbApellidos = tk.Entry(ventana)
-tbApellidos.pack()
-lbTelefono = tk.Label(ventana, text="Telefono: ")
-lbTelefono.pack()
-tbTelefono = tk.Entry(ventana)
-tbTelefono.pack()
-lbEdad = tk.Label(ventana, text="Edad: ")
-lbEdad.pack()
-tbEdad = tk.Entry(ventana)
-tbEdad.pack()
-lbEstatura = tk.Label(ventana, text="Estatura: ")
-lbEstatura.pack()
-tbEstatura = tk.Entry(ventana)
-tbEstatura.pack()
-lbGenero = tk.Label(ventana, text="Genero: ")
-lbGenero.pack()
-rbHombre = tk.Radiobutton(ventana, text="Hombre", variable=var_genero, value=1)
-rbHombre.pack()
-rbMujer = tk.Radiobutton(ventana, text="Mujer", variable=var_genero, value=2)
-rbMujer.pack()
+#crear etiquetas y campos de entrada
+label_nombres = tk.Label(ventana, text="Nombres:")
+label_nombres.pack()
+entry_nombres = tk.Entry(ventana)
+entry_nombres.pack()
 
-# Botones
-btnBorrar = tk.Button(ventana, text="Borrar valores", command=borrar_fun)
-btnBorrar.pack()
+label_apellidos = tk.Label(ventana, text="Apellidos:")
+label_apellidos.pack()
+entry_apellidos = tk.Entry(ventana)
+entry_apellidos.pack()
 
-btnGuardar = tk.Button(ventana, text="Guardar", command=guardar_valores)
-btnGuardar.pack()
+label_edad = tk.Label(ventana, text="Edad:")
+label_edad.pack()
+entry_edad = tk.Entry(ventana)
+entry_edad.pack()
 
+label_estatura = tk.Label(ventana, text="Estatura:")
+label_estatura.pack()
+entry_estatura = tk.Entry(ventana)
+entry_estatura.pack()
+
+label_telefono = tk.Label(ventana, text="Telefono:")
+label_telefono.pack()
+entry_telefono = tk.Entry(ventana)
+entry_telefono.pack()
+
+label_genero = tk.Label(ventana, text="Genero: ")
+label_genero.pack()
+
+rb_hombre = tk.Radiobutton(ventana, text="Hombre", variable=var_genero, value=1)
+rb_hombre.pack()
+
+rb_mujer = tk.Radiobutton(ventana, text="Mujer", variable=var_genero, value=2)
+rb_mujer.pack()
+
+#boton para guaradr datos
+btn_guardar = tk.Button(ventana, text="Guardar", command=guardar_datos)
+btn_guardar.pack()
+
+#boton para borrar campos
+btn_borrar = tk.Button(ventana, text="Borrar campos", command=limpiar_campos)
+btn_borrar.pack()
+
+#iniciar la aplicacion
 ventana.mainloop()
