@@ -12,3 +12,10 @@ Estatura: 1.65 cm
 Telefono: 9612708508
 Genero: Mujer
 
+Nombres: michelle
+Apellidos: ovando
+Edad: 19 anos
+Estatura: 1.6 cm
+Telefono: 1234567891
+Genero: Mujer
+

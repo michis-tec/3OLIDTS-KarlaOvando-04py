@@ -1,7 +1,37 @@
 import tkinter as tk
 from tkinter import messagebox
 import re
+import mysql.connector
 
+def insertarRegistro(nombre, apellidos, edad, telefono, estatura, genero):
+    try:
+        conexion = mysql.connector.Connect(
+            host="Localhost",
+            user="root",
+            password="1234",
+            database="Formulario",
+            port="3306"
+            )
+        cursor= conexion.cursor()
+        stringQuery = "INSERT INTO resgistros (nombre, apellidos, estatura, edad, telefono, genero) VALUES (%s, %s, %s, %s, %s, %s)"
+        valores = nombre, apellidos, telefono, estatura, edad, genero
+        cursor.execute(stringQuery,valores)
+        conexion.commit()
+        cursor.close()
+        messagebox.showinfo("insercion correcta", "datos guardados con exito")
+    except mysql.connector.Error as err:
+        messagebox.showerror("error en la conexion", f"error al insertar datos: {err}")
+
+def limpiar_campos():
+    entry_nombres.delete(0, tk.END)
+    entry_apellidos.delete(0, tk.END)
+    entry_edad.delete(0, tk.END)
+    entry_estatura.delete(0, tk.END)
+    entry_telefono.delete(0, tk.END)
+    var_genero.set(0)
+
+def borrar_campos():
+    limpiar_campos()
 
 def guardar_datos():
     #obtener los datos de los campos
@@ -10,6 +40,7 @@ def guardar_datos():
     edad = entry_edad.get()
     estatura = entry_estatura.get()
     telefono = entry_telefono.get()
+
 
     #obtener el genero seleccionado
     genero = ""
@@ -27,28 +58,19 @@ def guardar_datos():
         #guardar los datos en un archivo de texto
         with open("datos.txt", "a") as archivo:
             archivo.write(datos + "\n\n")
-
-        #mostrar un mensaje con loss datos capturados
-        messagebox.showinfo("Informacion", "Datos guardados con exito:\n\n" + datos)
-
-        #limpiar los controles despues de guardar
-        limpiar_campos()
+            insertarRegistro(nombres, apellidos, edad, estatura, telefono, genero)
+            messagebox.showinfo("informacion", "datos guadados con exito: \n\n"+datos)
+            limpiar_campos()
     else:
-        messagebox.showerror("Error", "Por favor, ingrese datos validos en los campos.")
+        messagebox.showerror("Error", "algunos de los campos tienen formato equivocado")
 
-def limpiar_campos():
-    entry_nombres.delete(0, tk.END)
-    entry_apellidos.delete(0, tk.END)
-    entry_edad.delete(0, tk.END)
-    entry_estatura.delete(0, tk.END)
-    entry_telefono.delete(0, tk.END)
-    var_genero.set(0)
 
 def es_entero_valido(valor):
     try:
         int(valor)
         return True
     except ValueError:
+        messagebox.showerror("Error edad", "valor de edad equivocado")
         return False
 
 def es_decimal_valido(valor):
@@ -66,7 +88,8 @@ def es_texto_valido(valor):
 
 #crear la ventana principal
 ventana = tk.Tk()
-ventana.title("Formulario")
+ventana.title("Formulario vr.003")
+ventana.geometry("300x400")
 
 #crear variables paraa los radiobutton
 var_genero = tk.IntVar()
